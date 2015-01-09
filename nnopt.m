@@ -1,3 +1,10 @@
+%Author: Tsien
+%Parameter:
+%   x: samples (size: I*S, I: #features, S: #samples)
+%   d: the label of samples (size: T*S)
+%
+%Output:
+%   W: the weights of NN (size: (I+1)*T)
 function W = nnopt(x, d)
 finv = @ilogsig;
 fderiv = @dlogsig_m;

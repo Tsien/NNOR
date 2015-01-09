@@ -1,7 +1,7 @@
 % ===================================================================================================
 % nnopt algorithm - Version 4.0
 % ------------------------------
-% Written by Oscar Fontenla-Romero, 06.05.2013 @ LIDIA,UDC - A Coruña, Spain
+% Written by Oscar Fontenla-Romero, 06.05.2013 @ LIDIA,UDC - A Coruï¿½a, Spain
 % Optimized for speed.
 %
 % PURPOSE OF THIS CODE:
@@ -105,8 +105,8 @@ else
         if (S>=I) 
             df2 = feval(fderiv,f_d).^2; % Square of the derivate of the neural function            
             b = (f_d.*df2)*x';          % b vector for the system of equetions
-            f_d = repmat(1,I+1,1)*f_d;
-            df2 = repmat(1,I+1,1)*df2;
+            f_d = ones(I+1,1)*f_d;
+            df2 = ones(I+1,1)*df2;
             A = (df2.*x)*x';            % A matrix for the system of equations                       
         else % SVD solution to invert the size of the system of linear equations
             derf = feval(fderiv,f_d);   % Derivate of the neural function

@@ -11,9 +11,9 @@ function y = CAcode(d)
   for i=1:1:s
       n = d(i);
       for j=1:1:n
-          y(j,i) = 0.95;
+          y(j,i) = 0.75;
       end
       for j=n+1:1:m
-          y(j,i) = 0.05;
+          y(j,i) = 0.25;
       end
   end
