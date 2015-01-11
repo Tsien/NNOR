@@ -32,15 +32,15 @@ f = @logsig_m;
 % Neural Network Simulation
 Output = feval( f , W'*[ones(1,S); x] ) ;
 [row, col] = size(Output);
-% for i = 1:1:row
-%     for j = 1:1:col
-%         if Output(i, j) > 0.5
-%             Output(i, j) = 0.95;
-%         else
-%             Output(i, j) = 0.25;
-%         end
-%     end
-% end
+for i = 1:1:row
+    for j = 1:1:col
+        if Output(i, j) > 0.5
+            Output(i, j) = 0.95;
+        else
+            Output(i, j) = 0.05;
+        end
+    end
+end
 
 ot = sum(ot - Output);
 ot(ot ~= 0) = [];

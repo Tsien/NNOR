@@ -4,16 +4,17 @@
 %
 %Output:
 %y: the CA of label (size: max*S, max = max(d))
-function y = CAcode(d)
+function y = CAcode(d, a, b)
+  d = round(d);
   m = max(d);
   s = size(d, 2);
   y = zeros(m, s);
   for i=1:1:s
       n = d(i);
       for j=1:1:n
-          y(j,i) = 0.75;
+          y(j,i) = b;
       end
       for j=n+1:1:m
-          y(j,i) = 0.25;
+          y(j,i) = a;
       end
   end
