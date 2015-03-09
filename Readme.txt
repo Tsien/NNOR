@@ -1,4 +1,4 @@
-A new convex objective function for Ordinal Regression of single-layer neural networks
+﻿A new convex objective function for Ordinal Regression of single-layer neural networks
 Graduation Project @ PARNEC NUAA.
 
 Objective: 
@@ -13,7 +13,7 @@ Future work:
 2. Add monotonicity constraints to the weights of neural network
 
 Other problems:
-1. Threshold：how to determine the threshold
+1. Threshold:how to determine the threshold
 2. Class Imbalance Problem
 3. The performance metrics: misclassification cost are not the same for different errors
 
