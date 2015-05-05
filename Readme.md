@@ -26,6 +26,7 @@ CMU StatLib Datasets Archive: http://lib.stat.cmu.edu/datasets/
 
 #### Referrences:
 [1] Fontenla-Romero O, Guijarro-Berdiñas B, Pérez-Sánchez B, et al. A new convex objective function for the supervised learning of single-layer neural networks[J]. Pattern Recognition, 2010, 43(5): 1984-1992.
+
 [2] Cheng J, Wang Z, Pollastri G. A neural network approach to ordinal regression[C]//Neural Networks, 2008. IJCNN 2008.(IEEE World Congress on Computational Intelligence). IEEE International Joint Conference on. IEEE, 2008: 1279-1284.
 
 ---
