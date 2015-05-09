@@ -11,13 +11,11 @@
 % 
 % Returns:
 % -------
-% A : Coefficient matrix of the system A*w = b (size: d+1 x d+1).
-% b : Right hand side values of the system A*w = b (size: d+1 x 1).
-% w : Weight vector (size: d+1 x 1).
-%     The 1st element is the bias (wj0).
+% W   : weights of every eELM.
+% MAE : Mean Absolute Error of the whole system.
 %
 % ===================================================================================================
-function [good, er] = testNC(dataset, K, P)
+function [W, MAE] = testNC(dataset, K, P)
     load(dataset);
     x = data(:, 1:end - 1);%inputs of the network (size: m x d). m = #samples
     y = data(:, end);% original label
@@ -46,28 +44,33 @@ function [good, er] = testNC(dataset, K, P)
     train_MAE = zeros(P, 1);
     for p = 1 : P % train P ELMs
         best_MAE = zeros(nhid, 1);
-        best_W = zeros(nhid, 1);
         for h = 1 : nhid % NN with different # nerons in hidden layer
             if K > 1
-                vali_num = (num - test_num) / K;
-                train_num = num - test_num - train_num;
-                cv_MAE = zeros(K, 1)
+                vali_num = ceil((num - test_num) / K);
+                train_num = num - test_num - vali_num;
+                cv_MAE = zeros(K, 1);
                 for i = 1 : K
                     j = i * vali_num;
-                    vali_x = train_x(j - valinum + 1 : j, :);
-                    vali_y = train_y(j - valinum + 1 : j, :);
-                    valiY = trainY(j - valinum + 1 : j);
+                    vali_x = train_x(j - vali_num + 1 : min(j, end), :);
+                    vali_y = train_y(j - vali_num + 1 : min(j, end), :);
+                    valiY = trainY(j - vali_num + 1 : min(j, end));
                     if i == 1
-                        train_x = train_x(vali_num + 1 : end, :);
-                        train_y = train_y(vali_num + 1 : end, :);
-                        trainY = trainY(vali_num + 1 : end);
+                        cv_train_x = train_x(vali_num + 1 : end, :);
+                        cv_train_y = train_y(vali_num + 1 : end, :);
+                        cv_trainY = trainY(vali_num + 1 : end);
                     else
-                        train_x = [train_x(1 : j - valinum, :) train_x(j + 1 : end, :)];
-                        train_y = [train_y(1 : j - valinum, :) train_y(j + 1 : end, :)];
-                        trainY = [trainY(1 : j - valinum) trainY(j + 1 : end)];
+                        if i == K
+                            cv_train_x = train_x(1 : j - vali_num, :);
+                            cv_train_y = train_y(1 : j - vali_num, :);
+                            cv_trainY = trainY(1 : j - vali_num);
+                        else
+                            cv_train_x = [train_x(1 : j - vali_num, :); train_x(j + 1 : end, :)];
+                            cv_train_y = [train_y(1 : j - vali_num, :); train_y(j + 1 : end, :)];
+                            cv_trainY = [trainY(1 : j - vali_num); trainY(j + 1 : end)];
+                        end
                     end
-                    [cv_W{i}, cv_MAE(i)] = elMseb(train_x, train_y, trainY, hidnum(h));
-                    vali_MAE(i) = calMAE(cv_W{i}, vali_x, vali_y);
+                    [cv_W{i}, cv_MAE(i)] = elMseb(cv_train_x, cv_train_y, cv_trainY, hidnum(h));
+                    vali_MAE(i) = calMAE(cv_W{i}, vali_x, valiY);
                 end
                 [best_MAE(h), pos] = min(vali_MAE);
                 best_W{h} = cv_W{pos};
@@ -80,19 +83,20 @@ function [good, er] = testNC(dataset, K, P)
     % ======================================================
     % ensemble all P ELMs
     [num, x_dim] = size(test_x);
-    output = zeros(num, P);
+    [num, y_dim] = size(test_y);
+    output = zeros(num, y_dim);
     for p = 1 : P
-        inputW = W{p}{1};
-        outputW = W{p}{2};
-        H = feval(@logsig_m, [ones(num, 1) x] * inputW);
-        output(:, p) = feval(@logsig_m, [ones(num,1) H] * outputW);
+        inputW = W{p}{1};% x_dim * hidnum
+        outputW = W{p}{2};% hidnum * y_dim
+        H = feval(@logsig_m, [ones(num, 1) test_x] * inputW);
+        output = output + feval(@logsig_m, [ones(num,1) H] * outputW);
     end
     
-    output_y = mean(output, 2);
+    output = output ./ P;
     ymax = max(testY);
     yy = zeros(num, 1);
     for i = 1 : num
-        ind = find(output_y(i, :) < 0.5);
+        ind = find(output(i, :) < 0.5);
         if isempty(ind)
             yy(i) = ymax;
         else

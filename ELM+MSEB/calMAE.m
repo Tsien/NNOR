@@ -15,6 +15,7 @@
 % =========================================================================
 
 function MAE = calMAE(W, x, y)
+    [num, x_dim] = size(x);
     inputW = W{1};
     outputW = W{2};
     H = feval(@logsig_m, [ones(num, 1) x] * inputW);%the output of hidden layer
@@ -24,9 +25,9 @@ function MAE = calMAE(W, x, y)
     for i = 1 : num
         ind = find(output(i, :) < 0.5);
         if isempty(ind)
-            yy(i) = ymax;
+            yy(i, 1) = ymax;
         else
-            yy(i) = ind(1) - 1;
+            yy(i, 1) = ind(1) - 1;
         end
     end
     
