@@ -24,7 +24,7 @@ function [W, MAE] = elMseb(x, cay, y, hidnum)
     [num, y_dim] = size(cay);
     % ======================================================
     %randomly choose input weights.
-    inputW = randn(x_dim + 1, hidnum);% subject to (0, 1) normal distribution
+    inputW = rand(x_dim + 1, hidnum) * 2 - 1;
     H = feval(@logsig_m, [ones(num, 1) x] * inputW);%the output of hidden layer
     
     % ======================================================
