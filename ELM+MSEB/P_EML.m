@@ -15,7 +15,7 @@
 % MAE : Mean Absolute Error of the whole system.
 %
 % ===================================================================================================
-function [W, MAE] = testNC(dataset, K, P)
+function [W, MAE] = P_EML(dataset, K, P)
     load(dataset);
     x = data(:, 1:end - 1);%inputs of the network (size: m x d). m = #samples
     y = data(:, end);% original label
