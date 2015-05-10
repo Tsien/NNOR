@@ -1,34 +1,54 @@
-function ORNN
-%load mnist_uint8;
-load abalone2;
-% train_x = double(train_x) / 255;
-% test_x  = double(test_x)  / 255;
-% train_y = double(train_y);
-% test_y  = double(test_y);
-% train_y = dataTransfer(train_y);
-% normalize
-[train_x, mu, sigma] = zscore(train_x);
-test_x = normalize(test_x, mu, sigma);
+%Author: Tsien at NUAA, China. 05/10/2015
+%This is the main function of ORNN
+%The dataset contains one variable, called data. The last column of 
+%data is the label. 
 
-% vx   = train_x(1:10000,:);
-% tx = train_x(10001:end,:);
-% vy   = train_y(1:10000,:);
-% ty = train_y(10001:end,:);
+% Parameters of the function:
+% --------------------------
+% datafile: contains label in its last column
+% hidnum  : the number of neurons in hidden layer
+% 
+% Returns:
+% -------
+% W   : weights of neural network.
+% MAE : Mean Absolute Error of the whole system.
+%
+% =========================================================================
 
-% vx = train_x(2401:end, :);
-% tx = train_x(1:2400, :);
-% vy = train_ORy(2401:end, :);
-% ty = train_ORy(1:2400, :);
+function [W, MAE] = ORNN(datafile, hidnum)
+    load(datafile);
+    x = data(:, 1:end - 1);%inputs of the network (size: m x d). m = #samples
+    y = data(:, end);% original label
+    cay = CAcode(y);% encoded label.
+    clear data;
+    
+    [num, in_dim] = size(x);
+    [num, out_dim] = size(cay);
+    
+    index = randperm(num);
+    test_num = ceil(0.2 * num);
+    test_x = x(index(1 : test_num), :);
+    test_y = cay(index(1 : test_num), :);
+    testY = y(index(1 : test_num));
+    train_x = x(index(test_num + 1 : end), :);
+    train_y = cay(index(test_num + 1 : end), :);
+    trainY = y(index(test_num + 1 : end));
+    
+    %======================================================
+    % normalize   
+    [train_x, mu, sigma] = zscore(train_x);
+    test_x = normalize(test_x, mu, sigma);
+    
+    %======================================================
 
-rand('state',0)
-nn = nnsetup([30 100 1]);
-nn.activation_function = 'sigm';    %  Sigmoid activation function
-nn.learningRate = 1;                %  Sigm require a lower learning rate
-opts.numepochs =  10;   %  Number of full sweeps through data
-opts.batchsize = 100;  %  Take a mean gradient step over this many samples
-opts.plot      = 1;    %  enable plotting
-%nn = nntrain(nn, tx, ty, opts, vx, vy);   %  nntrain takes validation set as last two arguments (optionally)
-nn = nntrain(nn, train_x, train_ORy, opts);
-[er, bad] = ornntest(nn, test_x, test_y);
-disp(['vanilla neural net test error: ' num2str(er)]);
-assert(er < 0.08, 'Too big error!');
+    rand('state',0);
+    nn = nnsetup([in_dim hidnum out_dim]);
+    nn.activation_function = 'sigm';    %  Sigmoid activation function
+    nn.learningRate = 1;                %  Sigm require a lower learning rate
+    opts.numepochs =  10;               %  Number of full sweeps through data
+    opts.batchsize = 100;               %  Take a mean gradient step over this many samples
+    opts.plot      = 1;                 %  enable plotting
+    nn = nntrain(nn, train_x, train_y, opts);
+    MAE = ornntest(nn, test_x, testY);
+    W = nn.W;
+    disp(['MAE' num2str(MAE)]);
