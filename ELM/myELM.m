@@ -1,10 +1,10 @@
-function [Time, Acc, MAE] = myELM(Data_File, NumberofHiddenNeurons)
+function [Time, Acc, MAE] = myELM(data, NumberofHiddenNeurons)
 
 % Usage: elm(Data_File, NumberofHiddenNeurons)
 % OR:    [TrainingTime, TestingTime, TrainingAccuracy, TestingAccuracy] = elm(Data_File, NumberofHiddenNeurons)
 %
 % Input:
-% Data_File             - Filename of data set
+% data                  - dataset
 % NumberofHiddenNeurons - Number of hidden neurons assigned to the ELM
 %
 % Output: 
@@ -16,7 +16,6 @@ function [Time, Acc, MAE] = myELM(Data_File, NumberofHiddenNeurons)
 %                           RMSE for regression or correct classification rate for classification
 %
 
-load(Data_File);
 [num, dim] = size(data);
 index = randperm(num);
 test_num = ceil(0.2 * num);

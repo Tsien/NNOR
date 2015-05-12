@@ -5,8 +5,8 @@
 
 % Parameters of the function:
 % --------------------------
-% datafile: contains label in its last column
-% hidnum  : the number of neurons in hidden layer
+% data  : contains label in its last column
+% hidnum: the number of neurons in hidden layer
 % 
 % Returns:
 % -------
@@ -15,8 +15,7 @@
 %
 % =========================================================================
 
-function [W, MAE] = ORNN(datafile, hidnum)
-    load(datafile);
+function [W, MAE] = ORNN(data, hidnum)
     x = data(:, 1:end - 1);%inputs of the network (size: m x d). m = #samples
     y = data(:, end);% original label
     cay = CAcode(y);% encoded label.
