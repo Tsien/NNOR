@@ -5,9 +5,9 @@
 
 % Parameters of the function:
 % --------------------------
-% dataset: contains label in its last column
-% K      : K fold cross validation, K = 1 means no CV.
-% P      : try to ensemble P ELMs
+% data: contains label in its last column
+% K   : K fold cross validation, K = 1 means no CV.
+% P   : try to ensemble P ELMs
 % 
 % Returns:
 % -------
@@ -15,7 +15,7 @@
 % MAE : Mean Absolute Error of the whole system.
 %
 % ===================================================================================================
-function [W, MAE] = P_EML(data, K, P)
+function [W, MAE, MZOE] = P_EML(data, K, P)
     x = data(:, 1:end - 1);%inputs of the network (size: m x d). m = #samples
     y = data(:, end);% original label
     cay = CAcode(y);% encoded label.
@@ -104,5 +104,6 @@ function [W, MAE] = P_EML(data, K, P)
     end
     
     MAE = sum(abs(testY - yy)) / num;
-    disp(['The test MAE:' num2str(MAE)]);
+    MZOE = numel(find(testY ~= yy)) / num;
+    disp(['The test MAE:' num2str(MAE) 'The test MZOE:' num2str(MZOE)]);
 end
