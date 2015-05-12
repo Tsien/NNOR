@@ -21,7 +21,6 @@ function [W, MAE, MZOE] = P_EML(data, K, P)
     cay = CAcode(y);% encoded label.
     [num, in_dim] = size(x);
     [num, out_dim] = size(cay);
-    hidnum = getHid(in_dim, out_dim, 5);
     
     % =====================================================
     index = randperm(num);
@@ -38,45 +37,13 @@ function [W, MAE, MZOE] = P_EML(data, K, P)
     [train_x, mu, sigma] = zscore(train_x);
     test_x = normalize(test_x, mu, sigma);
     % =====================================================
-    % training P ELMs with K-fold cross validation
-    nhid = numel(hidnum);
+    %select hidden number with K-fold cross validation
+    hidnum = getHidnum(K, train_x, train_y, trainY, 3);
+    % training P ELMs 
     train_MAE = zeros(P, 1);
+    W = cell(P, 1);
     for p = 1 : P % train P ELMs
-        best_MAE = zeros(nhid, 1);
-        for h = 1 : nhid % NN with different # nerons in hidden layer
-            if K > 1
-                vali_num = ceil((num - test_num) / K);
-                train_num = num - test_num - vali_num;
-                cv_MAE = zeros(K, 1);
-                for i = 1 : K
-                    j = i * vali_num;
-                    vali_x = train_x(j - vali_num + 1 : min(j, end), :);
-                    vali_y = train_y(j - vali_num + 1 : min(j, end), :);
-                    valiY = trainY(j - vali_num + 1 : min(j, end));
-                    if i == 1
-                        cv_train_x = train_x(vali_num + 1 : end, :);
-                        cv_train_y = train_y(vali_num + 1 : end, :);
-                        cv_trainY = trainY(vali_num + 1 : end);
-                    else
-                        if i == K
-                            cv_train_x = train_x(1 : j - vali_num, :);
-                            cv_train_y = train_y(1 : j - vali_num, :);
-                            cv_trainY = trainY(1 : j - vali_num);
-                        else
-                            cv_train_x = [train_x(1 : j - vali_num, :); train_x(j + 1 : end, :)];
-                            cv_train_y = [train_y(1 : j - vali_num, :); train_y(j + 1 : end, :)];
-                            cv_trainY = [trainY(1 : j - vali_num); trainY(j + 1 : end)];
-                        end
-                    end
-                    [cv_W{i}, cv_MAE(i)] = elMseb(cv_train_x, cv_train_y, cv_trainY, hidnum(h));
-                    vali_MAE(i) = calMAE(cv_W{i}, vali_x, valiY);
-                end
-                [best_MAE(h), pos] = min(vali_MAE);
-                best_W{h} = cv_W{pos};
-            end            
-        end
-        [train_MAE(p), pos] = min(best_MAE);
-        W{p} = best_W{pos};
+        [W{p}, train_MAE(p)] = elMseb(train_x, train_y, trainY, hidnum);        
     end
     
     % ======================================================
@@ -105,5 +72,5 @@ function [W, MAE, MZOE] = P_EML(data, K, P)
     
     MAE = sum(abs(testY - yy)) / num;
     MZOE = numel(find(testY ~= yy)) / num;
-    disp(['The test MAE:' num2str(MAE) 'The test MZOE:' num2str(MZOE)]);
+    disp(['The test MAE:' num2str(MAE) ' The test MZOE:' num2str(MZOE)]);
 end
