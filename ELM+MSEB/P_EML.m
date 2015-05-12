@@ -15,8 +15,7 @@
 % MAE : Mean Absolute Error of the whole system.
 %
 % ===================================================================================================
-function [W, MAE] = P_EML(dataset, K, P)
-    load(dataset);
+function [W, MAE] = P_EML(data, K, P)
     x = data(:, 1:end - 1);%inputs of the network (size: m x d). m = #samples
     y = data(:, end);% original label
     cay = CAcode(y);% encoded label.
@@ -105,5 +104,5 @@ function [W, MAE] = P_EML(dataset, K, P)
     end
     
     MAE = sum(abs(testY - yy)) / num;
-    disp([' MAE:' num2str(MAE)]);
+    disp(['The test MAE:' num2str(MAE)]);
 end
