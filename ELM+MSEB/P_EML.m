@@ -39,7 +39,7 @@ function [W, MAE, MZOE] = P_EML(data, K, P)
     test_x = normalize(test_x, mu, sigma);
     % =====================================================
     %select hidden number with K-fold cross validation
-    hidnum = getHidnum(K, train_x, train_y, trainY, 3);
+    hidnum = getHidnum(K, train_x, train_y, trainY, 3, ymax);
     % training P ELMs 
     W = cell(P, 1);
     for p = 1 : P % train P ELMs

@@ -6,14 +6,16 @@
 % K      : K fold cross validation, K = 1 means no CV.
 % train_x: training samples
 % train_y: the labels of training samples with CA code
-%
+% trainY : the original labels
+% alph   : additional bias
+% ymax   : max value of y
 % Returns:
 % -------
 % hn   : the number of hidden neurons. 
 %
 % ===================================================================================================
 
-function hn = getHidnum(k, train_x, train_y, trainY, alph)
+function hn = getHidnum(k, train_x, train_y, trainY, alph, ymax)
     [num, x_dim] = size(train_x);
     [num, y_dim] = size(train_y);
     hidnum = zeros(3, 1);
@@ -46,7 +48,7 @@ function hn = getHidnum(k, train_x, train_y, trainY, alph)
                 end
             end
             cv_W{i} = elMseb(cv_train_x, cv_train_y, cv_trainY, hidnum(h));
-            vali_MAE(i) = calMAE(cv_W{i}, vali_x, valiY);
+            vali_MAE(i) = calMAE(cv_W{i}, vali_x, valiY, ymax);
         end
         MAE(h) = sum(vali_MAE) / k;
     end

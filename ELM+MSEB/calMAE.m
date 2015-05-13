@@ -18,7 +18,7 @@
 function [MAE, MZOE] = calMAE(W, x, y, ymax)
     [num, x_dim] = size(x);
     inputW = W{1};
-    outputW = W{2};
+    outputW = W{2}; 
     H = feval(@logsig_m, [ones(num, 1) x] * inputW);%the output of hidden layer
     output = feval(@logsig_m, [ones(num,1) H] * outputW);%num * ydim, got through the second layer
     
