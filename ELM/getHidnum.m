@@ -22,6 +22,7 @@ function hn = getHidnum(k, train_data, alph)
     
     vali_num = ceil(num / k);
     MAE = zeros(3, 1);
+    vali_MAE = zeros(k, 1);
     for h = 1 : 3
         for i = 1 : k
             j = i * vali_num;
@@ -36,7 +37,7 @@ function hn = getHidnum(k, train_data, alph)
                 end
             end
             [mae, mzoe, W] = myELM(cv_train_data, hidnum(h));
-            [vali_MAE, mzoe] = predictELM(W, vali_data);
+            [vali_MAE(i), mzoe] = predictELM(W, vali_data);
         end
         MAE(h) = sum(vali_MAE) / k;
     end

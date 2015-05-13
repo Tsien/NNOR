@@ -6,7 +6,6 @@
 % Parameters of the function:
 % --------------------------
 % data  : contains label in its last column
-% hidnum: the number of neurons in hidden layer
 % 
 % Returns:
 % -------
@@ -15,7 +14,7 @@
 %
 % =========================================================================
 
-function [W, MAE] = ORNN(data, hidnum)
+function [W, MAE, MZOE] = ORNN(data)
     x = data(:, 1:end - 1);%inputs of the network (size: m x d). m = #samples
     y = data(:, end);% original label
     cay = CAcode(y);% encoded label.
@@ -32,14 +31,14 @@ function [W, MAE] = ORNN(data, hidnum)
     train_x = x(index(test_num + 1 : end), :);
     train_y = cay(index(test_num + 1 : end), :);
     trainY = y(index(test_num + 1 : end));
-    
     %======================================================
     % normalize   
     [train_x, mu, sigma] = zscore(train_x);
     test_x = normalize(test_x, mu, sigma);
     
     %======================================================
-
+    hidnum = getHidnum(10, train_x, train_y, trainY, 3);
+    
     rand('state',0);
     nn = nnsetup([in_dim hidnum out_dim]);
     nn.activation_function = 'sigm';    %  Sigmoid activation function
@@ -48,6 +47,7 @@ function [W, MAE] = ORNN(data, hidnum)
     opts.batchsize = 100;               %  Take a mean gradient step over this many samples
     opts.plot      = 1;                 %  enable plotting
     nn = nntrain(nn, train_x, train_y, opts);
-    MAE = ornntest(nn, test_x, testY);
+    [MAE, MZOE] = ornntest(nn, test_x, testY);
     W = nn.W;
-    disp(['MAE' num2str(MAE)]);
+    disp(['MAE: ' num2str(MAE) ', MZOE: ' num2str(MZOE)]);
+end
