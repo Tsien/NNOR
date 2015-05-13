@@ -1,4 +1,4 @@
-function [TrainingTime, TestingTime, TrainingAccuracy, TestingAccuracy] = elm(TrainingData_File, TestingData_File, Elm_Type, NumberofHiddenNeurons, ActivationFunction)
+function [TrainingTime, TestingTime, TrainingAccuracy, TestingAccuracy] = elm(data, Elm_Type, NumberofHiddenNeurons, ActivationFunction)
 
 % Usage: elm(TrainingData_File, TestingData_File, Elm_Type, NumberofHiddenNeurons, ActivationFunction)
 % OR:    [TrainingTime, TestingTime, TrainingAccuracy, TestingAccuracy] = elm(TrainingData_File, TestingData_File, Elm_Type, NumberofHiddenNeurons, ActivationFunction)
@@ -40,16 +40,21 @@ function [TrainingTime, TestingTime, TrainingAccuracy, TestingAccuracy] = elm(Tr
 REGRESSION=0;
 CLASSIFIER=1;
 
+
+[num, dim] = size(data);
+index = randperm(num);
+test_num = ceil(0.2 * num);
+train_data = data(index(test_num + 1 : end), :);
+test_data = data(index(1 : test_num), :);
+
 %%%%%%%%%%% Load training dataset
-train_data=load(TrainingData_File);
-T=train_data(:,1)';
-P=train_data(:,2:size(train_data,2))';
+T=train_data(:,end)';
+P=train_data(:,1:end-1)';
 clear train_data;                                   %   Release raw training data array
 
 %%%%%%%%%%% Load testing dataset
-test_data=load(TestingData_File);
-TV.T=test_data(:,1)';
-TV.P=test_data(:,2:size(test_data,2))';
+TV.T=test_data(:,end)';
+TV.P=test_data(:,1:end - 1)';
 clear test_data;                                    %   Release raw testing data array
 
 NumberofTrainingData=size(P,2);
