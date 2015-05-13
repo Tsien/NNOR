@@ -45,7 +45,7 @@ function hn = getHidnum(k, train_x, train_y, trainY, alph)
                     cv_trainY = [trainY(1 : j - vali_num); trainY(j + 1 : end)];
                 end
             end
-            [cv_W{i}, cv_MAE(i)] = elMseb(cv_train_x, cv_train_y, cv_trainY, hidnum(h));
+            cv_W{i} = elMseb(cv_train_x, cv_train_y, cv_trainY, hidnum(h));
             vali_MAE(i) = calMAE(cv_W{i}, vali_x, valiY);
         end
         MAE(h) = sum(vali_MAE) / k;

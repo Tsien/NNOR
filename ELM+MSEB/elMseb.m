@@ -16,10 +16,9 @@
 % Returns:
 % -------
 % W  : the parameters of the neural network.
-% MAE: mean absolute error
 % =========================================================================
 
-function [W, MAE] = elMseb(x, cay, y, hidnum)
+function W = elMseb(x, cay, y, hidnum)
     [num, x_dim] = size(x);
     [num, y_dim] = size(cay);
     % ======================================================
@@ -37,7 +36,4 @@ function [W, MAE] = elMseb(x, cay, y, hidnum)
     W{1} = inputW;
     W{2} = outputW;
     
-    %======================================================
-    %calculate MAE
-    MAE = calMAE(W, x, y);
 end

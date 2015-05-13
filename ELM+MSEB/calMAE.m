@@ -33,5 +33,5 @@ function [MAE, MZOE] = calMAE(W, x, y, ymax)
     
     MAE = sum(abs(y - yy)) / num;
     MZOE = numel(find(y ~= yy)) / num;
-    disp([' MAE:' num2str(MAE) ', MZOE' num2str(MZOE)]);
+    disp([' MAE: ' num2str(MAE) ', MZOE: ' num2str(MZOE)]);
 end

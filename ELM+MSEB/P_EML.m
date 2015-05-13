@@ -18,6 +18,7 @@
 function [W, MAE, MZOE] = P_EML(data, K, P)
     x = data(:, 1:end - 1);%inputs of the network (size: m x d). m = #samples
     y = data(:, end);% original label
+    ymax = max(y);
     cay = CAcode(y);% encoded label.
     [num, in_dim] = size(x);
     [num, out_dim] = size(cay);
@@ -40,11 +41,37 @@ function [W, MAE, MZOE] = P_EML(data, K, P)
     %select hidden number with K-fold cross validation
     hidnum = getHidnum(K, train_x, train_y, trainY, 3);
     % training P ELMs 
-    train_MAE = zeros(P, 1);
     W = cell(P, 1);
     for p = 1 : P % train P ELMs
-        [W{p}, train_MAE(p)] = elMseb(train_x, train_y, trainY, hidnum);        
+        W{p} = elMseb(train_x, train_y, trainY, hidnum);        
     end
+    
+    % ======================================================
+    % ensemble all P ELMs
+    [num, x_dim] = size(train_x);
+    [num, y_dim] = size(train_y);
+    output = zeros(num, y_dim);
+    for p = 1 : P
+        inputW = W{p}{1};% x_dim * hidnum
+        outputW = W{p}{2};% hidnum * y_dim
+        H = feval(@logsig_m, [ones(num, 1) train_x] * inputW);
+        output = output + feval(@logsig_m, [ones(num,1) H] * outputW);
+    end
+    
+    output = output ./ P;    
+    yy = zeros(num, 1);
+    for i = 1 : num
+        ind = find(output(i, :) < 0.5);
+        if isempty(ind)
+            yy(i) = ymax;
+        else
+            yy(i) = ind(1) - 1;
+        end
+    end
+    
+    MAE(1) = sum(abs(trainY - yy)) / num;
+    MZOE(1) = numel(find(trainY ~= yy)) / num;
+    disp(['Train MAE:' num2str(MAE(1)) ' Train MZOE:' num2str(MZOE(1))]);
     
     % ======================================================
     % ensemble all P ELMs
@@ -59,7 +86,6 @@ function [W, MAE, MZOE] = P_EML(data, K, P)
     end
     
     output = output ./ P;
-    ymax = max(testY);
     yy = zeros(num, 1);
     for i = 1 : num
         ind = find(output(i, :) < 0.5);
@@ -69,8 +95,7 @@ function [W, MAE, MZOE] = P_EML(data, K, P)
             yy(i) = ind(1) - 1;
         end
     end
-    
-    MAE = sum(abs(testY - yy)) / num;
-    MZOE = numel(find(testY ~= yy)) / num;
-    disp(['The test MAE:' num2str(MAE) ' The test MZOE:' num2str(MZOE)]);
+    MAE(2) = sum(abs(testY - yy)) / num;
+    MZOE(2) = numel(find(testY ~= yy)) / num;
+    disp(['Test MAE:' num2str(MAE(2)) ' Test MZOE:' num2str(MZOE(2))]);
 end
