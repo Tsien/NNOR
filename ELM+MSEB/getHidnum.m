@@ -23,7 +23,7 @@ function hn = getHidnum(k, train_x, train_y, trainY, alph, ymax)
     hidnum(2) = ceil(log(x_dim) / log(2));
     hidnum(3) = ceil(sqrt(x_dim * y_dim));
     
-    vali_num = ceil(num / k);
+    vali_num = floor(num / k);
     train_num = num - vali_num;
     MAE = zeros(3, 1);
     for h = 1 : 3

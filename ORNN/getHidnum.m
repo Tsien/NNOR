@@ -21,7 +21,7 @@ function hn = getHidnum(k, train_x, train_y, trainY, alph)
     hidnum(2) = ceil(log(x_dim) / log(2));
     hidnum(3) = ceil(sqrt(x_dim * y_dim));
     
-    vali_num = ceil(num / k);
+    vali_num = floor(num / k);
     MAE = zeros(3, 1);
     vali_MAE = zeros(k, 1);
     for h = 1 : 3
@@ -48,7 +48,7 @@ function hn = getHidnum(k, train_x, train_y, trainY, alph)
             nn.activation_function = 'sigm';    %  Sigmoid activation function
             nn.learningRate = 1;                %  Sigm require a lower learning rate
             opts.numepochs =  10;               %  Number of full sweeps through data
-            opts.batchsize = 100;               %  Take a mean gradient step over this many samples
+            opts.batchsize = 10;               %  Take a mean gradient step over this many samples
             opts.plot      = 0;                 %  enable plotting
             nn = nntrain(nn, cv_train_x, cv_train_y, opts);
             vali_MAE(i) = ornntest(nn, vali_x, valiY);

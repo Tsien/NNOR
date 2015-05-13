@@ -13,7 +13,7 @@
 % ===================================================================================================
 
 
-function [MAE, MZOE] = mainELM(data)
+function [W, MAE, MZOE] = mainELM(data)
 
     [num, dim] = size(data);
     index = randperm(num);

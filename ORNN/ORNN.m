@@ -44,10 +44,11 @@ function [W, MAE, MZOE] = ORNN(data)
     nn.activation_function = 'sigm';    %  Sigmoid activation function
     nn.learningRate = 1;                %  Sigm require a lower learning rate
     opts.numepochs =  10;               %  Number of full sweeps through data
-    opts.batchsize = 100;               %  Take a mean gradient step over this many samples
-    opts.plot      = 1;                 %  enable plotting
+    opts.batchsize = 10;               %  Take a mean gradient step over this many samples
+    opts.plot      = 0;                 %  enable plotting
     nn = nntrain(nn, train_x, train_y, opts);
-    [MAE, MZOE] = ornntest(nn, test_x, testY);
+    [MAE(1), MZOE(1)] = ornntest(nn, train_x, trainY);
+    [MAE(2), MZOE(2)] = ornntest(nn, test_x, testY);
     W = nn.W;
     disp(['MAE: ' num2str(MAE) ', MZOE: ' num2str(MZOE)]);
 end

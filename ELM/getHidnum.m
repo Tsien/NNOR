@@ -20,7 +20,7 @@ function hn = getHidnum(k, train_data, alph)
     hidnum(2) = ceil(log(x_dim) / log(2));
     hidnum(3) = ceil(sqrt(x_dim));
     
-    vali_num = ceil(num / k);
+    vali_num = floor(num / k);
     MAE = zeros(3, 1);
     vali_MAE = zeros(k, 1);
     for h = 1 : 3
