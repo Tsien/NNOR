@@ -46,7 +46,7 @@ function [Time, W, MAE, MZOE] = MSEB(data)
     %======================================================
     %Ordinal Regression
     stime = cputime;
-    [MAE(2), MZOE(2)] = predict(W, test_x, test_y);
+    [MAE(2), MZOE(2)] = predict(W, test_x, test_y, ymax);
     etime = cputime;
     Time(2) = etime - stime;
     %======================================================
