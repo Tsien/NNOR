@@ -11,10 +11,11 @@
 % -------
 % W   : weights of neural network.
 % MAE : Mean Absolute Error of the whole system.
-%
+% MZOE: Mean Zero One Error
+% Time: Training time and test time
 % =========================================================================
 
-function [W, MAE, MZOE] = ORNN(data)
+function [W, MAE, MZOE, Time] = ORNN(data)
     x = data(:, 1:end - 1);%inputs of the network (size: m x d). m = #samples
     y = data(:, end);% original label
     cay = CAcode(y);% encoded label.
@@ -46,9 +47,15 @@ function [W, MAE, MZOE] = ORNN(data)
     opts.numepochs =  10;               %  Number of full sweeps through data
     opts.batchsize = 10;               %  Take a mean gradient step over this many samples
     opts.plot      = 0;                 %  enable plotting
+    stime = cputime;
     nn = nntrain(nn, train_x, train_y, opts);
+    etime = cputime;
+    Time(1) = etime - stime;
     [MAE(1), MZOE(1)] = ornntest(nn, train_x, trainY);
+    stime = cputime;
     [MAE(2), MZOE(2)] = ornntest(nn, test_x, testY);
+    etime = cputime;
+    Time(2) = etime - stime;
     W = nn.W;
     disp(['MAE: ' num2str(MAE) ', MZOE: ' num2str(MZOE)]);
 end

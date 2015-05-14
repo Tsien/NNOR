@@ -11,10 +11,11 @@
 % -------
 % MAE           - Training and testing MAE
 % MZOE          - Training and testing MZOE
+% Time          - Time consume
 %
 % ===================================================================================================
 
-function [MAE, MZOE] = predictELM(W, data)
+function [MAE, MZOE, Time] = predictELM(W, data)
 
     x = data(:, 1:end-1);
     T = data(:, end);
@@ -22,6 +23,7 @@ function [MAE, MZOE] = predictELM(W, data)
     OutputWeight = W{2};
     BiasofHiddenNeurons = W{3};
     
+    stime = cputime;
     [num, x_dim] = size(x);
     tempH = InputWeight * x';
     ind = ones(1, num);
@@ -29,6 +31,8 @@ function [MAE, MZOE] = predictELM(W, data)
     tempH = tempH + biasM;
     H = 1 ./ (1 + exp(-tempH));
     Y = H' * OutputWeight;
+    etime = cputime;
+    Time = etime - stime;
     
     MAE = sum(abs(T - Y)) / num;
     Y = ceil(Y - 0.5);

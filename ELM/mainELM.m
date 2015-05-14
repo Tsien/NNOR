@@ -13,7 +13,7 @@
 % ===================================================================================================
 
 
-function [W, MAE, MZOE] = mainELM(data)
+function [Time, W, MAE, MZOE] = mainELM(data)
 
     [num, dim] = size(data);
     index = randperm(num);
@@ -27,7 +27,8 @@ function [W, MAE, MZOE] = mainELM(data)
     
     %======================================================
     hidnum = getHidnum(10, train_data, 3);
-    [MAE(1), MZOE(1), W] = myELM(train_data, hidnum);
-    [MAE(2), MZOE(2)] = predictELM(W, test_data);
+    stime = cputime;
+    [MAE(1), MZOE(1), W, Time(1)] = myELM(train_data, hidnum); 
+    [MAE(2), MZOE(2), Time(2)] = predictELM(W, test_data);
 end
 

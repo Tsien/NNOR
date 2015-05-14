@@ -1,4 +1,4 @@
-function [MAE, MZOE, W] = myELM(data, NumberofHiddenNeurons)
+function [MAE, MZOE, W, Time] = myELM(data, NumberofHiddenNeurons)
 
 % Usage: myELM(Data_File, NumberofHiddenNeurons)
 % OR:    [TrainingTime, TestingTime, TrainingAccuracy, TestingAccuracy] = elm(Data_File, NumberofHiddenNeurons)
@@ -8,6 +8,7 @@ function [MAE, MZOE, W] = myELM(data, NumberofHiddenNeurons)
 % NumberofHiddenNeurons - Number of hidden neurons assigned to the ELM
 %
 % Output: 
+% Time          - Time consume
 % MAE           - Training and testing MAE
 % MZOE          - Training and testing MZOE
 % W             - Weights of ELM
@@ -20,7 +21,7 @@ clear data;                                   %   Release raw training data arra
 NumberofTrainingData=size(P,2);
 NumberofInputNeurons=size(P,1);
 
-
+stime = cputime;
 %%%%%%%%%%% Random generate input weights InputWeight (w_i) and biases BiasofHiddenNeurons (b_i) of hidden neurons
 InputWeight=rand(NumberofHiddenNeurons,NumberofInputNeurons)*2-1;
 BiasofHiddenNeurons=rand(NumberofHiddenNeurons,1);
@@ -43,7 +44,8 @@ W{2} = OutputWeight;
 W{3} = BiasofHiddenNeurons;
 %%%%%%%%%%% Calculate error
 Y=(H' * OutputWeight)';                             %   Y: the actual output of the training data
-
+etime = cputime;
+Time = etime - stime;
 clear H;
 
 

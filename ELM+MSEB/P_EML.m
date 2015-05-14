@@ -13,9 +13,9 @@
 % -------
 % W   : weights of every eELM.
 % MAE : Mean Absolute Error of the whole system.
-%
+% Time: Training time and test time
 % ===================================================================================================
-function [W, MAE, MZOE] = P_EML(data, K, P)
+function [W, MAE, MZOE, Time] = P_EML(data, K, P)
     x = data(:, 1:end - 1);%inputs of the network (size: m x d). m = #samples
     y = data(:, end);% original label
     ymax = max(y);
@@ -42,9 +42,12 @@ function [W, MAE, MZOE] = P_EML(data, K, P)
     hidnum = getHidnum(K, train_x, train_y, trainY, 3, ymax);
     % training P ELMs 
     W = cell(P, 1);
+    stime = cputime;
     for p = 1 : P % train P ELMs
         W{p} = elMseb(train_x, train_y, trainY, hidnum);        
     end
+    etime = cputime;
+    Time(1) = etime - stime;
     
     % ======================================================
     % ensemble all P ELMs
@@ -78,12 +81,16 @@ function [W, MAE, MZOE] = P_EML(data, K, P)
     [num, x_dim] = size(test_x);
     [num, y_dim] = size(test_y);
     output = zeros(num, y_dim);
+    
+    stime = cputime;
     for p = 1 : P
         inputW = W{p}{1};% x_dim * hidnum
         outputW = W{p}{2};% hidnum * y_dim
         H = feval(@logsig_m, [ones(num, 1) test_x] * inputW);
         output = output + feval(@logsig_m, [ones(num,1) H] * outputW);
     end
+    etime = cputime;
+    Time(2) = etime - stime;
     
     output = output ./ P;
     yy = zeros(num, 1);

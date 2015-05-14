@@ -9,11 +9,13 @@
 % 
 % Returns:
 % -------
+% Time: training time and test time
 % W   : weights of neural network.
 % MAE : Mean Absolute Error of the whole system.
+% MZOE: Mean Zero one Error
 %
 % ===================================================================================================
-function [W, MAE, MZOE] = MSEB(data)
+function [Time, W, MAE, MZOE] = MSEB(data)
     x = data(:, 1:end - 1);%inputs of the network (size: m x d). m = #samples
     y = data(:, end);% original label
     cay = CAcode(y);% encoded label.
@@ -39,19 +41,20 @@ function [W, MAE, MZOE] = MSEB(data)
     
     %======================================================
     %training
+    stime = cputime;
     yd = size(train_y, 2);
     for j = 1 : yd
         [A,b,W(:, j)] = nnopt2(train_x, train_y(:, j), @ilogsig, @dlogsig_m);
     end
-    
+    etime = cputime;
     [MAE(1) MZOE(1)] = predict(W, train_x, trainY, ymax);
-    
+    Time(1) = etime - stime;
     %======================================================
     %Ordinal Regression
-    
+    stime = cputime;
     [MAE(2) MZOE(2)] = predict(W, test_x, testY, ymax);
-    
-
+    etime = cputime;
+    Time(2) = etime - stime;
     %======================================================
 
 end
